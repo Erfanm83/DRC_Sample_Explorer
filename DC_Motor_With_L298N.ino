@@ -1,8 +1,20 @@
+#include <Servo.h>
+
+// create servo objects to control servo motors
+Servo rgbSensorServo;
+Servo liverageServo;
+Servo gripperServo;
+
 //UltraSonics' Pins
-int front_trigPin = 12;
-int front_echoPin = 11;
+int front_trigPin = 12;//green
+int front_echoPin = 11;//blue
 int right_trigPin = 4;
 int right_echoPin = 3;
+
+//variable to store the servo motors position
+int rgbSensorpos = 0;
+int liveragepos = 0;
+int gripperpos = 0;
 
 // connect motor controller pins to Arduino digital pins
 // motor one
@@ -13,6 +25,7 @@ int in2 = 8;
 int enB = 5;
 int in3 = 7;
 int in4 = 6;
+
 void setup()
 {
   Serial.begin(9600);
@@ -28,6 +41,10 @@ void setup()
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+  //set servo pins on arduino board
+  rgbSensorServo.attach(0);
+  liverageServo.attach(1);
+  gripperServo.attach(2);
 }
 void demoOne()
 {
@@ -68,18 +85,17 @@ void demoTwo()
   digitalWrite(in4, HIGH); 
   // accelerate from zero to maximum speed
 
- for (int i = 0; i < 256; i++) { 
-  analogWrite(enA, i); 
-  analogWrite(enB, i); 
-  delay(20); 
+  for (int i = 0; i < 256; i++) { 
+    analogWrite(enA, i); 
+    analogWrite(enB, i); 
+    delay(20); 
   } 
-// decelerate from maximum speed to zero 
-for (int i = 255; i > 0; --i) {
+  // decelerate from maximum speed to zero 
+  for (int i = 255; i > 0; --i) {
     analogWrite(enA, i);
     analogWrite(enB, i);
     delay(20);
   } 
-
  
   // now turn off motors
   digitalWrite(in1, LOW);
@@ -192,3 +208,42 @@ void triggerSignal(int given_trigPin){
   delayMicroseconds(10);
   digitalWrite(given_trigPin , LOW);
 }
+void gripIn(){
+  for (pos = 0; pos <= 20; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+  for (pos = 20; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
+void gripOut(){
+
+}
+void pullUp(){
+
+}
+void pullDown(){
+
+}
+void rotateUp(){
+
+}
+void rotateDown(){
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
