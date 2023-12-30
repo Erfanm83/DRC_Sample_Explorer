@@ -40,8 +40,10 @@ class Motors {
     void set_motor(int in1, int in2, int en, int speed) {
         int *direction = get_direction(speed);
 
-        digitalWrite(in1, direction[0]);
-        digitalWrite(in2, direction[1]);
+        // digitalWrite(in1, direction[0]);
+        // digitalWrite(in2, direction[1]);
+        digitalWrite(in1, HIGH);
+        digitalWrite(in2, LOW);
         analogWrite(en, normalize_speed(speed));
     }
 

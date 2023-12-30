@@ -8,13 +8,15 @@ Servo rgbSensorServo;
 Servo liverageServo;
 Servo gripperServo;
 // ==================================== SETTINGS ==================================/////////////////
-const int THRESHOLD = 5;
+// const int THRESHOLD = 5;
+const int THRESHOLD_LOW = 5;
+const int THRESHOLD_HIGH = 10;
 const int SENSORS_COUNT = 4;
 const int SENSOR_PINS[SENSORS_COUNT] = {12, 11, 4, 3};
-const int ERRORS[4] = {0, 1, 2, 3};
+const int ERRORS[3] = {0, 1, 2};
 
-const int MAX_SPEED = 255;
-const int NORMAL_SPEED = 205;
+const int MAX_SPEED = 250;
+const int NORMAL_SPEED = 200;
 const int MIN_SPEED = 0;
 
 const int LEFT_IN1 = 9;
@@ -31,8 +33,8 @@ const int FRONT_ECHO = 11;
 const int RIGHT_TRIG = 4;
 const int RIGHT_ECHO = 3;
 
-const float KP = 80;
-const float KI = 50;
+const float KP = 5;
+const float KI = 3;
 const float KD = 0;
 
 const bool DEBUG = false;
@@ -44,7 +46,7 @@ int rgbSensorpos = 0;
 int liveragepos = 0;
 int gripperpos = 0;
 
-Sensors sensors(SENSORS_COUNT, SENSOR_PINS, ERRORS);
+Sensors sensors(SENSORS_COUNT, SENSOR_PINS, ERRORS, THRESHOLD_LOW, THRESHOLD_HIGH);
 
 Motors motors(
     NORMAL_SPEED, MIN_SPEED, MAX_SPEED,
@@ -121,7 +123,7 @@ void loop() {
   //   delay(20);
   // }
   //helps to control the rate at which distance measurements are taken
-  delay(1);
+  delay(50);
 }
 // void demoOne()
 // {

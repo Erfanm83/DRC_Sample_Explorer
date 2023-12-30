@@ -20,6 +20,4 @@ class PID {
 
         return proportional * KP + integral * KI + derivative * KD;
     }
-
-
 };
