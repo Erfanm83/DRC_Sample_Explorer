@@ -13,8 +13,8 @@ class Sensors {
     Sensors (int sensors_count, int *sensor_pins, int *errors, int threshold_low, int threshold_high) {
         // this->threshold = threshold;
         //Coming soon...
-        this -> threshold_low;
-        this -> threshold_high;
+        this->threshold_low;
+        this->threshold_high;
         this->sensor_pins = sensor_pins;
         this->sensors_count = sensors_count;
         this->errors = errors;
@@ -30,9 +30,13 @@ class Sensors {
         int error;
 
         // Get distance from ultrasonic sensors'
-        int front_distance = get_distance(sensor_pin[1]);
-        int right_distance = get_distance(sensor_pins[3]);
+        int front_distance = get_distance(sensor_pins[0] , sensor_pins[1]);
+        int right_distance = get_distance(sensor_pins[2] , sensor_pins[3]);
 
+        Serial.print("front_distance : ");
+        Serial.println(front_distance);
+        Serial.print("right_distance : ");
+        Serial.println(right_distance);
         // Calculate error based on the difference in distances
         int distance_difference = front_distance - right_distance;
         //if positive : go straight
@@ -57,6 +61,9 @@ class Sensors {
         }
         
         previous_error = error;
+        delay(50);
+        Serial.print("error : ");
+        Serial.println(error);
         return error;
     }
 
@@ -77,15 +84,15 @@ class Sensors {
     //   return sensor_value < threshold;
     // }
 
-    int get_distance(int sensor_pin) {
+    int get_distance(int trig_sensor_pin , int echo_sensor_pin) {
       int duration, distance;
       //sending trigger pulse to signal
-      digitalWrite(sensor_pin , LOW);
+      digitalWrite(trig_sensor_pin , LOW);
       delayMicroseconds(2);
-      digitalWrite(sensor_pin , HIGH);
+      digitalWrite(trig_sensor_pin , HIGH);
       delayMicroseconds(10);
-      digitalWrite(sensor_pin , LOW);
-      duration = pulseIn(sensor_pin, HIGH);
+      digitalWrite(trig_sensor_pin , LOW);
+      duration = pulseIn(echo_sensor_pin, HIGH);
       distance = (duration / 2) / 29.1;
       return distance;
     }

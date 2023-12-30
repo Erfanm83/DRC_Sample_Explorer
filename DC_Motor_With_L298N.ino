@@ -11,12 +11,12 @@ Servo gripperServo;
 // const int THRESHOLD = 5;
 const int THRESHOLD_LOW = 5;
 const int THRESHOLD_HIGH = 10;
-const int SENSORS_COUNT = 4;
+const int SENSORS_COUNT = 4;//not needed
 const int SENSOR_PINS[SENSORS_COUNT] = {12, 11, 4, 3};
 const int ERRORS[3] = {0, 1, 2};
 
-const int MAX_SPEED = 250;
-const int NORMAL_SPEED = 200;
+const int MAX_SPEED = 180;
+const int NORMAL_SPEED = 150;
 const int MIN_SPEED = 0;
 
 const int LEFT_IN1 = 9;
@@ -38,7 +38,7 @@ const float KI = 3;
 const float KD = 0;
 
 const bool DEBUG = false;
-const int DELAY_TIME = 1000;
+const int DELAY_TIME = 50;
 
 // ==============================================  /////////////////
 //variable to store the servo motors position
@@ -123,7 +123,7 @@ void loop() {
   //   delay(20);
   // }
   //helps to control the rate at which distance measurements are taken
-  delay(50);
+  delay(DELAY_TIME);
 }
 // void demoOne()
 // {
