@@ -7,25 +7,24 @@
 Servo rgbSensorServo;
 Servo liverageServo;
 Servo gripperServo;
-// ==================================== SETTINGS ==================================/////////////////
-// const int THRESHOLD = 5;
-const int THRESHOLD_LOW = 5;
-const int THRESHOLD_HIGH = 10;
+//////////////////////// ==================================== SETTINGS ==================================/////////////////
+const int THRESHOLD_LOW = 8;
+const int THRESHOLD_HIGH = 20;
 const int SENSORS_COUNT = 4;//not needed
 const int SENSOR_PINS[SENSORS_COUNT] = {12, 11, 4, 3};
-const int ERRORS[3] = {0, 1, 2};
+const int ERRORS[4] = {0, 1, 2 , 3};
 
-const int MAX_SPEED = 180;
-const int NORMAL_SPEED = 150;
+const int MAX_SPEED = 130;
+const int NORMAL_SPEED = 89;
 const int MIN_SPEED = 0;
 
-const int LEFT_IN1 = 9;
-const int LEFT_IN2 = 8;
-const int LEFT_EN = 10;
+const int LEFT_IN1 = 7;
+const int LEFT_IN2 = 6;
+const int LEFT_EN = 5;
 
-const int RIGHT_IN1 = 7;
-const int RIGHT_IN2 = 6;
-const int RIGHT_EN = 5;
+const int RIGHT_IN1 = 9;
+const int RIGHT_IN2 = 8;
+const int RIGHT_EN = 10;
 
 //UltraSonics' Pins
 const int FRONT_TRIG = 12;
@@ -33,11 +32,11 @@ const int FRONT_ECHO = 11;
 const int RIGHT_TRIG = 4;
 const int RIGHT_ECHO = 3;
 
-const float KP = 5;
-const float KI = 3;
+const float KP = 32;
+const float KI = 5;
 const float KD = 0;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 const int DELAY_TIME = 50;
 
 // ==============================================  /////////////////
@@ -68,9 +67,16 @@ void setup()
 }
 void loop() {
   int error = sensors.calculate_error();
-  int speed_difference = pid.calculate_speed_difference(error);
-  motors.drive(speed_difference, DEBUG);
-
+  int speed_difference = 0;
+  if (error == 1){
+    speed_difference = pid.calculate_speed_difference(error);
+    motors.drive(speed_difference, DEBUG);
+  }else if(error == 2){
+    motors.goStraight(DEBUG);
+  }else if(error == 3){
+    motors.turnLeft(DEBUG);
+  }
+  
   if(DEBUG) {
       Serial.print("error: ");
       Serial.println(error);
