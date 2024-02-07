@@ -40,24 +40,28 @@ class Sensors {
         //if positive : go straight
         //if negative : go right
         
-        // Turn right
+        // Set Distance from right
         if (right_distance > threshold_low) {
             error = errors[1];
+            // Turn right
+            if (front_distance <= threshold_high + 5) {
+                error = errors[4];
+            }
         }
         // Go straight
         else if (right_distance <= threshold_low && front_distance >= threshold_high) {
             error = errors[2];
         }
         // Turn left
-        else if (right_distance < threshold_low && front_distance < threshold_high){
+        else if (right_distance < threshold_low && front_distance < threshold_high) {
             error = errors[3];
         }
-        // Continue straight 
+        // Continue straight
         else {
-            error = previous_error;
+            error = errors[2];
         }
 
-        delay(50);
+        // delay(50);
         return error;
     }
 

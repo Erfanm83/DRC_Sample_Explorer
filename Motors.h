@@ -48,11 +48,13 @@ public:
 
   int normalize_speed(int speed) {
 
-    if(speed <= 30){
-      return 25;
-    }else{
-      return constrain(abs(speed), min_speed, max_speed);
-    }
+    return constrain(abs(speed), min_speed, max_speed);
+
+    // if(speed <= 50){
+    //   return 40;
+    // }else{
+    //   return constrain(abs(speed), min_speed, max_speed);
+    // }
   }
 
   void drive(int speed_difference, bool debug) {
@@ -77,11 +79,24 @@ public:
 
   void turnLeft(bool debug){
       
-      int left_speed = normal_speed - 40;
-      int right_speed = normal_speed + 80;
+      int left_speed = normal_speed - 30;
+      int right_speed = normal_speed + 90;
 
-      set_motor(left_in1 , left_in2, left_en, left_speed);
-      set_motor(right_in1, right_in2, right_en, right_speed);
+      // for(int i = 0 ; i < 3; i++){
+
+      digitalWrite(right_in1, HIGH);
+      digitalWrite(right_in2, LOW);
+      analogWrite(right_en, normalize_speed(right_speed));
+
+      digitalWrite(left_in1, LOW);
+      digitalWrite(left_in2, HIGH);
+      analogWrite(left_en, normalize_speed(left_speed));
+
+      delay(50);
+
+      // set_motor(left_in1 , left_in2, left_en, left_speed);
+      // set_motor(right_in1, right_in2, right_en, right_speed);
+      // }
 
       if (debug) {
       Serial.print("NOW , turn Left...  left_speed: ");
@@ -97,13 +112,26 @@ public:
     
   }
 
-  void turnRight(bool debug){
+  void turnRight(bool debug) {
       
-      int left_speed = normal_speed + 80;
-      int right_speed = normal_speed - 40;
+      int left_speed = normal_speed + 90;
+      int right_speed = normal_speed - 30;
 
+      set_motor(left_in1 , left_in2, left_en, 80);
+      set_motor(right_in1, right_in2, right_en, 80);
+      delay(50);
       set_motor(left_in1 , left_in2, left_en, left_speed);
       set_motor(right_in1, right_in2, right_en, right_speed);
+
+      // digitalWrite(right_in1, LOW);
+      // digitalWrite(right_in2, HIGH);
+      // analogWrite(right_en, normalize_speed(right_speed));
+
+      // digitalWrite(left_in1, HIGH);
+      // digitalWrite(left_in2, LOW);
+      // analogWrite(left_en, normalize_speed(left_speed));
+
+      // delay(50);
 
       if (debug) {
       Serial.print("NOW , turn Right...  left_speed: ");
@@ -138,40 +166,4 @@ public:
       Serial.println(right_speed > 80 ? "T" : "F");
       }
   }
-  // void stop() {
-  //   // decelerate from maximum speed to zero
-  //   for (int i = max_speed; i > min_speed; i -= 1) {
-  //     analogWrite(left_en, i);
-  //     analogWrite(right_en, i);
-  //     delay(20);
-  //   }
-  //   // now turn off motors
-  //   digitalWrite(left_in1, LOW);
-  //   digitalWrite(left_in2, LOW);
-  //   digitalWrite(right_in1, LOW);
-  //   digitalWrite(right_in2, LOW);
-  // }
-
-  // void goForward(){
-  // //turn on motors
-  //     digitalWrite(left_in2, LOW);
-  //    digitalWrite(left_in1, HIGH);
-  //     digitalWrite(right_in2, LOW);
-  //     digitalWrite(right_in1, HIGH);
-  //     // accelerate from zero to maximum speed
-  //     for (int i = min_speed; i < max_speed; i++) {
-  //       analogWrite(left_en, i);
-  //       analogWrite(right_en, i);
-  //       delay(20);
-  //     }
-  //    analogWrite(left_en, 100);
-  // analogWrite(right_en, 100);
-  //    delay(500);
-  // analogWrite(left_en, 0);
-  // analogWrite(right_en, 0);
-  // delay(500);
-  // analogWrite(left_en, 100);
-  // analogWrite(right_en, 100);
-  // delay(500);
-  // }
 };

@@ -1,22 +1,17 @@
-#include <Servo.h>
-#include "Sensors.h"
-#include "Motors.h"
-#include "PID.h"
-
 // create servo objects to control servo motors
 Servo rgbSensorServo;
 Servo liverageServo;
 Servo gripperServo;
 //////////////////////// ==================================== SETTINGS ==================================/////////////////
-const int THRESHOLD_LOW = 8;
-const int THRESHOLD_HIGH = 20;
+const int THRESHOLD_LOW = 7;
+const int THRESHOLD_HIGH = 17;
 const int SENSORS_COUNT = 4;//not needed
 const int SENSOR_PINS[SENSORS_COUNT] = {12, 11, 4, 3};
-const int ERRORS[4] = {0, 1, 2 , 3};
+const int ERRORS[5] = {0, 1, 2, 3, 4};
 
 const int MAX_SPEED = 130;
-const int NORMAL_SPEED = 89;
-const int MIN_SPEED = 0;
+const int NORMAL_SPEED = 80;
+const int MIN_SPEED = 40;
 
 const int LEFT_IN1 = 7;
 const int LEFT_IN2 = 6;
@@ -32,18 +27,25 @@ const int FRONT_ECHO = 11;
 const int RIGHT_TRIG = 4;
 const int RIGHT_ECHO = 3;
 
-const float KP = 32;
-const float KI = 5;
+const float KP = 20;
+const float KI = 6;
 const float KD = 0;
 
 const bool DEBUG = true;
-const int DELAY_TIME = 50;
+const int DELAY_TIME = 500;
 
-// ==============================================  /////////////////
 //variable to store the servo motors position
 int rgbSensorpos = 0;
 int liveragepos = 0;
 int gripperpos = 0;
+
+// bool flag = true;
+// ==============================================  /////////////////
+#include <Servo.h>
+#include "Sensors.h"
+#include "Motors.h"
+#include "PID.h"
+
 
 Sensors sensors(SENSORS_COUNT, SENSOR_PINS, ERRORS, THRESHOLD_LOW, THRESHOLD_HIGH);
 
@@ -68,21 +70,28 @@ void setup()
 void loop() {
   int error = sensors.calculate_error();
   int speed_difference = 0;
-  if (error == 1){
+  if(error == 2) {
+    motors.goStraight(DEBUG);
+    // flag = false;
+  }
+  // while (sensors.calculate_error() != 2){
+  else if(error == 4) {
+    motors.turnRight(DEBUG);
+  }else if (error == 1) {
     speed_difference = pid.calculate_speed_difference(error);
     motors.drive(speed_difference, DEBUG);
-  }else if(error == 2){
-    motors.goStraight(DEBUG);
-  }else if(error == 3){
+  }else if(error == 3) {
     motors.turnLeft(DEBUG);
   }
+  // delay(50);
+  // }
   
   if(DEBUG) {
-      Serial.print("error: ");
-      Serial.println(error);
-      Serial.print("speed_difference: ");
-      Serial.println(speed_difference);
-      Serial.println("--------------------------------------");
+      // Serial.print("error: ");
+      // Serial.println(error);
+      // Serial.print("speed_difference: ");
+      // Serial.println(speed_difference);
+      // Serial.println("--------------------------------------");
       delay(DELAY_TIME);
   }
   // demoOne();
@@ -188,30 +197,6 @@ void loop() {
 //   digitalWrite(in3, LOW);
 //   digitalWrite(in4, LOW);  
 // }
-
-//turn to right direction
-// void goRight(){
-//   digitalWrite(in1, LOW);
-//   digitalWrite(in2, HIGH);  
-//   digitalWrite(in3, LOW);
-//   digitalWrite(in4, HIGH); 
-//   for (int i = 0; i < 50 ; i++){
-//     analogWrite(enB, i);
-//     delay(20);
-//   }
-// }
-//turn to left direction
-// void goLeft(){
-//   digitalWrite(in1, HIGH);
-//   digitalWrite(in2, LOW);  
-//   digitalWrite(in3, HIGH);
-//   digitalWrite(in4, LOW); 
-//   for (int i = 0; i < 50 ; i++){
-//     analogWrite(enA, i);
-//     delay(20);
-//   }
-// }
-//Break
 
 // void gripIn(){
 //   for (pos = 0; pos <= 20; pos += 1) { // goes from 0 degrees to 180 degrees
