@@ -53,13 +53,13 @@ class Sensors {
         //if negative : go right
         
         // Set Distance from right
-        // if (right_distance > threshold_low) {
-        //     error = errors[1];
-        //     // Turn right
-        //     if (front_distance <= threshold_high + 5) {
-        //         error = errors[4];
-        //     }
-        // }
+        if (right_distance > threshold_low) {
+            error = errors[1];
+            // Turn right
+            if (front_distance <= threshold_high + 5) {
+                error = errors[4];
+            }
+        }
         // Go straight
         if (right_distance <= threshold_low && front_distance > threshold_high) {
             error = errors[2];
@@ -119,11 +119,11 @@ class Sensors {
                 return "green";
             }
             // Check if the detected color is red
-            // else if (r < redThreshold && g > greenThreshold) {
-            //   Serial.println("Detected Red Color!");
-            //   return "red";
-            // }
-            // // Check if the detected color is blue
+            else if (r < redThreshold && g > greenThreshold) {
+              Serial.println("Detected Red Color!");
+              return "red";
+            }
+            // Check if the detected color is blue
 
             return "white";
         }
@@ -135,14 +135,6 @@ class Sensors {
       else{
          return detectColor(canBlack);
       }
-    }
-
-    void disableSensor(){
-      tcs.disable();
-    }
-
-    void enableSensor(){
-      tcs.enable();
     }
     
 };

@@ -9,13 +9,13 @@
 /////////////////================================ PRIMITIVE VALUES ================================/////////////////
 int THRESHOLD_LOW = 7;
 int THRESHOLD_HIGH = 12;
-int SENSORS_COUNT = 4;//not needed
+int SENSORS_COUNT = 4;
 int SENSOR_PINS[4] = {12, 11, 4, 3};
 int ERRORS[5] = {0, 1, 2, 3, 4};
 
 int MAX_SPEED = 120;
 int NORMAL_SPEED = 77;
-int MIN_SPEED = 50;//it was 40
+int MIN_SPEED = 50;
 
 int LEFT_IN1 = 7;
 int LEFT_IN2 = 6;
@@ -122,74 +122,63 @@ void loop() {
     
     // looking for boxes at front
     if(firstAidZone == true) {
-        Serial.println("on First Aid Zone...");
         while(isblue == false && isgreen == false) {
             Serial.println("on while loop");
-            // if(sensors.detectColor(false) != "ERROR") {
-                Serial.println("On while loop");
-                digitalWrite(9, HIGH);
-                digitalWrite(8, LOW);
-                analogWrite(10, 90);
-
-                digitalWrite(7, HIGH);
-                digitalWrite(6, LOW);
-                analogWrite(5, 90);
-                // motors.goStraight(true);
-                sensors.enableSensor();
+            if(sensors.detectColor(false) != "ERROR") {
+                motors.goStraight(true);
                 if(sensors.detectColor(false) == "blue") {
                     isblue = true;
                 }
                 else if (sensors.detectColor(false) == "green") {
                     isgreen = true;
                 }
-            // }
-            // else
-            //     Serial.println("ERROR Getting Data From tcs sensor");
+            }
+            else
+                Serial.println("ERROR Getting Data From tcs sensor");
         }
         if(isblue) {
             motors.rollBack(DEBUG);
             //picking Up blue Box
             pickUp(liverageServo ,gripperServo ,rgbSensorServo);
-            Serial.println();
-            Serial.println("Now, Picking Up the blue box");
+            Serial.println("Picking Up the blue box...");
             inTargetZone = true;
         }
         else if(isgreen) {
             //picking Up green box
             pickUp(liverageServo ,gripperServo ,rgbSensorServo);
-            Serial.println("Now, Picking Up blue box");
+            Serial.println("Picking Up blue box...");
             inTargetZone = true;
         }
     }
 
     //looking for circle area on the ground
-    // if (inTargetZone == true) {
-    //     Serial.println("on Target Zone...");
-    //     //putting Down red Box
-    //     if(sensors.detectColor(false) == "blue" && isblue == true) {
-    //         // putDown(liverageServo ,gripperServo ,rgbSensorServo);
-    //         // motors.turnLeft(DEBUG);
-    //         // Serial.println("blue Box Successfully Put Down !");
-    //         // delay(500);
-    //     }
-    //     //putting Down green Box
-    //     else if(sensors.detectColor(false) = "green" && isgreen == true) {
-    //         // putDown(liverageServo ,gripperServo ,rgbSensorServo);
-    //         // Serial.println("Task Successfully Completed !");
-    //         // delay(500);
-    //     }
-    // }
+    if (inTargetZone == true) {
+        Serial.println("on Target Zone...");
+        //putting Down red Box
+        if(sensors.detectColor(false) == "blue" && isblue == true) {
+            // putDown(liverageServo ,gripperServo ,rgbSensorServo);
+            // motors.turnLeft(DEBUG);
+            // Serial.println("blue Box Successfully Put Down !");
+            // delay(500);
+        }
+        //putting Down green Box
+        else if(sensors.detectColor(false) = "green" && isgreen == true) {
+            // putDown(liverageServo ,gripperServo ,rgbSensorServo);
+            // Serial.println("Task Successfully Completed !");
+            // delay(500);
+        }
+    }
     
     //DEBUG Mode
-    // if(DEBUG) {
-    //     Serial.print("error: ");
-    //     Serial.println(error);
-    //     Serial.print("speed_difference: ");
-    //     Serial.println(speed_difference);
-    //     Serial.println("--------------------------------------");
-    //     //Adjust delay helps to control the rate at which distance measurements are taken
-    //     delay(DELAY_TIME);
-    // }
+    if(DEBUG) {
+        Serial.print("error: ");
+        Serial.println(error);
+        Serial.print("speed_difference: ");
+        Serial.println(speed_difference);
+        Serial.println("--------------------------------------");
+        //Adjust delay helps to control the rate at which distance measurements are taken
+        delay(DELAY_TIME);
+    }
 }
 
   //pick Up boxes from the area
