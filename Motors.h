@@ -119,7 +119,7 @@ public:
       if (debug) {
           Serial.println();
           Serial.print("NOW , go Straight...  left_speed: ");
-          Serial.print(normalize_speed(left_speed));
+          Serial.println(normalize_speed(left_speed));
 
           Serial.print("NOW , go Straight...  right_speed: ");
           Serial.println(normalize_speed(right_speed));
@@ -142,10 +142,10 @@ public:
 
       if (debug) {
           Serial.print("NOW , rolling Back...  left_speed: ");
-          Serial.print(70);
+          Serial.println(70);
 
           Serial.print("NOW , rolling Back...  right_speed: ");
-          Serial.print(70);
+          Serial.println(70);
       }
   }
 };

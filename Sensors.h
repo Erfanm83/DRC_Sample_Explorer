@@ -53,19 +53,19 @@ class Sensors {
         //if negative : go right
         
         // Set Distance from right
-        if (right_distance > threshold_low) {
-            error = errors[1];
-            // Turn right
-            if (front_distance <= threshold_high + 5) {
-                error = errors[4];
-            }
-        }
+        // if (right_distance > threshold_low) {
+        //     error = errors[1];
+        //     // Turn right
+        //     if (front_distance <= threshold_high + 5) {
+        //         error = errors[4];
+        //     }
+        // }
         // Go straight
-        else if (right_distance <= threshold_low && front_distance >= threshold_high) {
+        if (right_distance <= threshold_low && front_distance > threshold_high) {
             error = errors[2];
         }
         // Turn left
-        else if (right_distance < threshold_low && front_distance < threshold_high) {
+        else if (front_distance < threshold_high) {
             error = errors[3];
         }
         // Continue straight
@@ -93,7 +93,6 @@ class Sensors {
     String detectColor(bool canBlack) {
         // Read RGB values from the sensor
         uint16_t r, g, b, c;
-        tcs.enable();
         tcs.getRawData(&r, &g, &b, &c);
 
         // Print RGB values
@@ -104,32 +103,38 @@ class Sensors {
         //check to see not to have zero values 
         if(r != 0 && g != 0 && b != 0) {
           
-          // Check if the detected color is black
-          if(r < blackThreshold && g < blackThreshold && b < blackThreshold
-           && g < greenThreshold && canBlack) {
-              Serial.println("Detected Black Color! ");
-              return "black";
-          }
-          else if (r < 66 && g < 98 && b < blueThreshold && canBlack == false) {
-              Serial.println("Detected blue Color!");
-              return "blue";
-          }
-          // Check if the detected color is green
-          else if (r < 41 && g < greenThreshold && b < 60 && canBlack == false) {
-              Serial.println("Detected Green Color!");
-              return "green";
-          }
-          // Check if the detected color is red
-          // else if (r < redThreshold && g > greenThreshold) {
-          //   Serial.println("Detected Red Color!");
-          //   return "red";
-          // }
-          // // Check if the detected color is blue
+            // Check if the detected color is black
+            if(r < blackThreshold && g < blackThreshold && b < blackThreshold
+            && g < greenThreshold && canBlack) {
+                Serial.println("Detected Black Color! ");
+                return "black";
+            }
+            else if (r < 66 && g < 98 && b < blueThreshold && canBlack == false) {
+                Serial.println("Detected blue Color!");
+                return "blue";
+            }
+            // Check if the detected color is green
+            else if (r < 41 && g < greenThreshold && b < 60 && canBlack == false) {
+                Serial.println("Detected Green Color!");
+                return "green";
+            }
+            // Check if the detected color is red
+            // else if (r < redThreshold && g > greenThreshold) {
+            //   Serial.println("Detected Red Color!");
+            //   return "red";
+            // }
+            // // Check if the detected color is blue
 
-          return "white";
+            return "white";
+        }
+
+      Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+      if(!tcs.begin()){
+          return "ERROR";
       }
-      
-      return "ERROR";
+      else{
+         return detectColor(canBlack);
+      }
     }
 
     void disableSensor(){

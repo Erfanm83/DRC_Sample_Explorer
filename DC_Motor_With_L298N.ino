@@ -7,8 +7,8 @@
 #include <Wire.h>
 #include <Adafruit_TCS34725.h>
 /////////////////================================ PRIMITIVE VALUES ================================/////////////////
-int THRESHOLD_LOW = 6;
-int THRESHOLD_HIGH = 11;
+int THRESHOLD_LOW = 7;
+int THRESHOLD_HIGH = 12;
 int SENSORS_COUNT = 4;//not needed
 int SENSOR_PINS[4] = {12, 11, 4, 3};
 int ERRORS[5] = {0, 1, 2, 3, 4};
@@ -70,6 +70,14 @@ void setup() {
     if (!tcs.begin()) {
         Serial.println("Could not find a valid TCS34725 sensor, check wiring!");
     }
+
+    pinMode(9, OUTPUT);
+    pinMode(8, OUTPUT);
+    pinMode(10, OUTPUT);
+
+    pinMode(5, OUTPUT);
+    pinMode(7, OUTPUT);
+    pinMode(6, OUTPUT);
 }
 
 void loop() {
@@ -85,7 +93,9 @@ void loop() {
             motors.goStraight(DEBUG);
         }
         else if(error == 4) {
-            motors.turnRight(DEBUG);
+            speed_difference = pid.calculate_speed_difference(error);
+            motors.drive(speed_difference, DEBUG);
+            // motors.turnRight(DEBUG);
         }
         else if (error == 1) {
             speed_difference = pid.calculate_speed_difference(error);
@@ -98,15 +108,15 @@ void loop() {
 
     //on FirstAid Zone
     if(sensors.detectColor(true) == "black" && !firstAidZone) {
-        sensors.disableSensor();
+        // sensors.disableSensor();
         rgbSensorServo.attach(A0);
-        rgbSensorServo.write(0);
+        // rgbSensorServo.write(0);
         delay(50);
         //pull up rgb sensor
         pull(rgbSensorServo, 0, 87, true);
         firstAidZone = true;
         rgbSensorServo.detach();
-        sensors.enableSensor();
+        sensors.disableSensor();
         delay(500);
     }
     
@@ -115,64 +125,71 @@ void loop() {
         Serial.println("on First Aid Zone...");
         while(isblue == false && isgreen == false) {
             Serial.println("on while loop");
-            if(sensors.detectColor(false) != "ERROR") {
+            // if(sensors.detectColor(false) != "ERROR") {
                 Serial.println("On while loop");
-                motors.drive(-10 , true);
-                //picking Up blue Box
+                digitalWrite(9, HIGH);
+                digitalWrite(8, LOW);
+                analogWrite(10, 90);
+
+                digitalWrite(7, HIGH);
+                digitalWrite(6, LOW);
+                analogWrite(5, 90);
+                // motors.goStraight(true);
+                sensors.enableSensor();
                 if(sensors.detectColor(false) == "blue") {
-                    sensors.disableSensor();
-                    motors.rollBack(DEBUG);
-                    delay(500);
-                    pickUp(liverageServo ,gripperServo ,rgbSensorServo);
-                    Serial.println();
-                    Serial.println("Now, Picking Up blue box");
                     isblue = true;
-                    inTargetZone = true;
-                    delay(500);
                 }
-                //picking Up green box
                 else if (sensors.detectColor(false) == "green") {
-                    // pickUp(liverageServo ,gripperServo ,rgbSensorServo);
-                    // Serial.println("Now, Picking Up blue box");
                     isgreen = true;
-                    inTargetZone = true;
-                    delay(500);
                 }
-            }
-            else
-                Serial.println("ERROR Getting Data From tcs sensor");
-            
+            // }
+            // else
+            //     Serial.println("ERROR Getting Data From tcs sensor");
+        }
+        if(isblue) {
+            motors.rollBack(DEBUG);
+            //picking Up blue Box
+            pickUp(liverageServo ,gripperServo ,rgbSensorServo);
+            Serial.println();
+            Serial.println("Now, Picking Up the blue box");
+            inTargetZone = true;
+        }
+        else if(isgreen) {
+            //picking Up green box
+            pickUp(liverageServo ,gripperServo ,rgbSensorServo);
+            Serial.println("Now, Picking Up blue box");
+            inTargetZone = true;
         }
     }
 
     //looking for circle area on the ground
-    if (inTargetZone == true) {
-        Serial.println("on Target Zone...");
-        //putting Down red Box
-        if(sensors.detectColor(false) == "blue" && isblue == true) {
-            // putDown(liverageServo ,gripperServo ,rgbSensorServo);
-            // motors.turnLeft(DEBUG);
-            // Serial.println("blue Box Successfully Put Down !");
-            delay(500);
-        }
-        //putting Down green Box
-        else if(sensors.detectColor(false) = "green" && isgreen == true){
-            // putDown(liverageServo ,gripperServo ,rgbSensorServo);
-            // Serial.println("Task Successfully Completed !");
-            // delay(500);
-        }
-    }
+    // if (inTargetZone == true) {
+    //     Serial.println("on Target Zone...");
+    //     //putting Down red Box
+    //     if(sensors.detectColor(false) == "blue" && isblue == true) {
+    //         // putDown(liverageServo ,gripperServo ,rgbSensorServo);
+    //         // motors.turnLeft(DEBUG);
+    //         // Serial.println("blue Box Successfully Put Down !");
+    //         // delay(500);
+    //     }
+    //     //putting Down green Box
+    //     else if(sensors.detectColor(false) = "green" && isgreen == true) {
+    //         // putDown(liverageServo ,gripperServo ,rgbSensorServo);
+    //         // Serial.println("Task Successfully Completed !");
+    //         // delay(500);
+    //     }
+    // }
     
     //DEBUG Mode
-    if(DEBUG) {
-        Serial.print("error: ");
-        Serial.println(error);
-        Serial.print("speed_difference: ");
-        Serial.println(speed_difference);
-        Serial.println("--------------------------------------");
-        //Adjust delay helps to control the rate at which distance measurements are taken
-        delay(DELAY_TIME);
-    }
+    // if(DEBUG) {
+    //     Serial.print("error: ");
+    //     Serial.println(error);
+    //     Serial.print("speed_difference: ");
+    //     Serial.println(speed_difference);
+    //     Serial.println("--------------------------------------");
+    //     //Adjust delay helps to control the rate at which distance measurements are taken
+    //     delay(DELAY_TIME);
+    // }
 }
 
   //pick Up boxes from the area
@@ -181,12 +198,15 @@ void loop() {
       gripperServo.attach(A2);
       // liverageServo.write(15);
       // gripperServo.write(55);
+      //close the gripper
+      pull(gripperServo, 45, 85, false);
+      delay(500);
       //pull down gripper mechanism
       pull(liverageServo, 15 , 80, true);
-      delay(3000);
+      delay(2000);
       //close the gripper
       pull(gripperServo, 45, 85, true);
-      delay(3000);
+      delay(2000);
       //pull up gripper mechanism
       pull(liverageServo, 15 , 68, false);
       delay(100);
